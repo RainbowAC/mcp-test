@@ -4,6 +4,14 @@
 
 ---
 
+## ✅ 项目特性
+
+- **模块化架构**: 清晰分离工具定义、业务逻辑和数据访问层
+- **完整的工具管理**: 支持工具的增删改查、分类筛选与统计分析
+- **灵活的搜索功能**: 支持按关键词搜索工具
+- **完善的测试覆盖**: 包括单元测试、集成测试和端到端测试
+- **易于扩展**: 设计便于添加新功能和持久化存储
+
 ## ✅ 项目结构
 
 ```
@@ -93,6 +101,7 @@ python server.py
 - `list_tools(category: str = None)`
 - `add_tool(name: str, level: int, category: str)`
 - `get_tool_level(tool_name: str)`
+- `search_tools(keyword: str)`
 - `update_tool(name: str, level: int = None, category: str = None)`
 - `delete_tool(name: str)`
 - `get_categories()`
@@ -109,7 +118,7 @@ python server.py
 pytest -q
 ```
 
-> ✅ 所有测试应当通过（包括 MCP 工具端到端测试）。
+> ✅ 所有 18 个测试应当通过（包括 MCP 工具端到端测试、模块化测试和客户端测试）。
 
 ---
 
@@ -123,6 +132,16 @@ print(manager.list_all())
 
 manager.add_tool("Machine Learning", 5, "AI")
 print(manager.get_statistics())
+```
+
+---
+
+## 🧪 示例程序
+
+项目包含示例程序，展示如何使用工具管理器：
+
+```bash
+python examples/basic_usage.py
 ```
 
 ---

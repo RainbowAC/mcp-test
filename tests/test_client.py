@@ -122,9 +122,22 @@ async def run_standalone_test():
         sys.exit(1)
 
 async def test_search_tools():
-    async with MCPClient() as client:
-        result = await client.call_tool("search_tools", {"keyword": "Python"})
-        assert result["count"] >= 0
+    # 配置服务器参数
+    server_params = StdioServerParameters(
+        command="python",
+        args=["server.py"]
+    )
+    
+    async with stdio_client(server_params) as (read_stream, write_stream):
+        async with ClientSession(read_stream, write_stream) as session:
+            # 初始化会话
+            await session.initialize()
+            
+            result = await session.call_tool("search_tools", {"keyword": "Python"})
+            # 检查返回结果是否包含预期的内容
+            assert hasattr(result, 'content')
+            assert len(result.content) > 0
+            assert '"tools"' in result.content[0].text
 
 if __name__ == "__main__":
     asyncio.run(run_standalone_test())
