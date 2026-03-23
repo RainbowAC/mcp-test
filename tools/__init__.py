@@ -13,6 +13,7 @@ from . import update_tool
 from . import delete_tool
 from . import get_categories
 from . import get_statistics
+from . import performance_monitor
 
 __all__ = [
     'echo',
@@ -24,5 +25,6 @@ __all__ = [
     'update_tool',
     'delete_tool',
     'get_categories',
-    'get_statistics'
+    'get_statistics',
+    'performance_monitor'
 ]

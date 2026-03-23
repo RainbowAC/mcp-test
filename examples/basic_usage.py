@@ -13,11 +13,11 @@ if ROOT_DIR not in sys.path:
     sys.path.insert(0, ROOT_DIR)
 
 from tools_module import ToolManager
-
+from config import config
 
 def main():
-    # 创建工具管理器实例
-    manager = ToolManager()
+    # 创建工具管理器实例，使用MySQL数据库
+    manager = ToolManager(db_url=config.SQLALCHEMY_DATABASE_URL)
     
     print("=" * 50)
     print("1. 列出所有工具")

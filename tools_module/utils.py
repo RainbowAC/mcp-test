@@ -42,30 +42,28 @@ def calculate_statistics(tools: Dict[str, Tool]) -> ToolStatistics:
     total_level = sum(tool.level for tool in tools.values())
     avg_level = round(total_level / len(tools), 2)
     
-    # 按类别统计
+    # 按类别统计 - 使用更高效的方式计算
     category_stats = {}
     for tool in tools.values():
         cat = tool.category
         if cat not in category_stats:
-            category_stats[cat] = {
-                "count": 0,
-                "total_level": 0,
-                "avg_level": 0
-            }
+            category_stats[cat] = {"count": 0, "total_level": 0}
         category_stats[cat]["count"] += 1
         category_stats[cat]["total_level"] += tool.level
     
     # 计算每个类别的平均等级
-    for cat in category_stats:
-        category_stats[cat]["avg_level"] = round(
-            category_stats[cat]["total_level"] / category_stats[cat]["count"], 2
-        )
-        del category_stats[cat]["total_level"]  # 移除中间数据
+    final_category_stats = {}
+    for cat, stats in category_stats.items():
+        avg_cat_level = round(stats["total_level"] / stats["count"], 2)
+        final_category_stats[cat] = {
+            "count": stats["count"],
+            "avg_level": avg_cat_level
+        }
     
     return ToolStatistics(
         total_tools=len(tools),
         average_level=avg_level,
-        by_category=category_stats
+        by_category=final_category_stats
     )
 
 

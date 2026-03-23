@@ -1,3 +1,14 @@
+# 核心依赖
 mcp>=1.0.0
-pytest>=7.0.0
-pytest-asyncio>=0.21.0
+PyMySQL>=1.0.2
+SQLAlchemy>=2.0.0
+
+# 系统监控
+psutil>=5.8.0         # 用于系统性能监控
+
+# 可选依赖
+python-dotenv>=1.0.0  # 用于环境变量管理
+gunicorn>=21.2.0      # 用于生产部署
+uvicorn>=0.24.0       # ASGI服务器
+fastapi>=0.104.0      # 如果需要额外的Web框架支持
+cryptography>=41.0.0  # 安全加密库

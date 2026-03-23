@@ -16,7 +16,8 @@ from . import (
     update_tool,
     delete_tool,
     get_categories,
-    get_statistics
+    get_statistics,
+    performance_monitor
 )
 
 def register_all_tools(mcp: FastMCP, tool_manager: ToolManager):
@@ -40,3 +41,4 @@ def register_all_tools(mcp: FastMCP, tool_manager: ToolManager):
     delete_tool.register_delete_tool_tool(mcp, tool_manager)
     get_categories.register_get_categories_tool(mcp, tool_manager)
     get_statistics.register_get_statistics_tool(mcp, tool_manager)
+    performance_monitor.register_performance_monitor_tool(mcp, tool_manager)

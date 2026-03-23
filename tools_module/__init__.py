@@ -7,6 +7,7 @@ Tools Module - 工具管理模块包
 - 数据库管理 (database)
 - 业务逻辑处理 (manager)
 - 工具函数 (utils)
+- 性能监控 (monitor)
 
 使用示例:
     from tools_module import ToolManager
@@ -27,12 +28,14 @@ from .models import Tool, ToolStatistics
 from .database import ToolDatabase
 from .manager import ToolManager
 from . import utils
+from .monitor import PerformanceMonitor
 
 __all__ = [
     'Tool',
     'ToolStatistics', 
     'ToolDatabase',
     'ToolManager',
+    'PerformanceMonitor',
     'utils'
 ]
 

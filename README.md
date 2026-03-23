@@ -1,153 +1,174 @@
-# MCP Tool Management Service
+# MCP Production Server - 技能管理服务器
 
-一个基于 **MCP**（Modular Code Platform）的工具管理示例服务，支持通过 MCP 工具接口对"工具"进行增删改查、分类筛选与统计分析。
+基于 FastMCP 构建的生产就绪技能管理 API 服务器，支持多种数据库后端和环境配置。
 
----
+## 项目概述
 
-## ✅ 项目特性
+本项目是一个基于 MCP (Model Context Protocol) 的技能管理服务器，提供了一套完整的工具管理和 API 接口。服务器支持多种数据库后端，具有灵活的配置选项，并可轻松部署到不同环境中。
 
-- **模块化架构**: 清晰分离工具定义、业务逻辑和数据访问层
-- **完整的工具管理**: 支持工具的增删改查、分类筛选与统计分析
-- **灵活的搜索功能**: 支持按关键词搜索工具
-- **完善的测试覆盖**: 包括单元测试、集成测试和端到端测试
-- **易于扩展**: 设计便于添加新功能和持久化存储
+## 功能特性
 
-## ✅ 项目结构
+- 基于 FastMCP 框架构建
+- 支持多种数据库后端（MySQL、SQLite 等）
+- 灵活的环境配置管理
+- 完整的工具管理系统
+- 性能监控功能
+- Docker 容器化部署支持
+- RESTful API 接口
+
+## 项目结构
 
 ```
 mcp-test/
-├── server.py               # MCP 服务器入口，注册工具和资源
-├── tools/                  # 独立工具模块目录
-│   ├── __init__.py         # 工具包初始化
-│   ├── registry.py         # 工具注册中心
-│   ├── echo.py             # Echo 工具
-│   ├── calculate.py        # 计算工具
-│   ├── list_tools.py       # 列出工具
-│   ├── add_tool.py         # 添加工具
-│   ├── get_tool_level.py   # 获取工具等级
-│   ├── search_tools.py     # 搜索工具
-│   ├── update_tool.py      # 更新工具
-│   ├── delete_tool.py      # 删除工具
-│   ├── get_categories.py   # 获取类别
-│   └── get_statistics.py   # 获取统计信息
-├── tools_module/           # 工具管理核心模块
-│   ├── __init__.py         # 包含导出接口（ToolManager 等）
-│   ├── models.py           # 数据模型（Tool、ToolStatistics）
-│   ├── database.py         # 数据存储层（内存实现）
-│   ├── manager.py          # 业务逻辑层/接口
-│   └── utils.py            # 通用工具（格式化、统计、标准化等）
-├── examples/               # 使用示例
-│   └── basic_usage.py
-└── tests/                  # 测试目录
-    ├── conftest.py         # pytest 配置：添加项目根到 sys.path
-    ├── test_client.py      # 通过 MCP 客户端测试业务功能
-    ├── test_mcp_pytest.py  # pytest 异步自动化测试
-    └── test_modular.py     # 直接测试 ToolManager 模块
+├── server.py             # 主服务器入口
+├── config.py             # 配置管理
+├── requirements.txt      # 项目依赖
+├── Dockerfile           # Docker 构建文件
+├── tools/               # 工具注册模块
+│   ├── registry.py
+│   └── ...              # 各种工具实现
+├── tools_module/        # 工具管理模块
+│   ├── __init__.py
+│   ├── models.py        # 数据模型
+│   ├── database.py      # 数据库操作
+│   ├── manager.py       # 业务逻辑管理器
+│   └── ...
+├── .env.development     # 开发环境配置
+├── .env.production      # 生产环境配置
+├── install.sh           # Linux/Mac 安装脚本
+├── install.bat          # Windows 安装脚本
+├── start.bat            # Windows 启动脚本
+└── mcp_dev.db           # SQLite 开发数据库
 ```
 
----
+## 依赖项
 
-## 🏗️ 工具模块化架构
+- Python >= 3.8
+- mcp >= 1.0.0
+- PyMySQL >= 1.0.2
+- SQLAlchemy >= 2.0.0
+- psutil >= 5.8.0
+- python-dotenv >= 1.0.0
+- gunicorn >= 21.2.0 (生产环境)
+- uvicorn >= 0.24.0
 
-项目采用模块化设计，每个工具都作为独立的 Python 文件：
+## 环境配置
 
-### 工具注册机制
-- **tools/registry.py**: 统一注册所有工具到 MCP 服务器
-- **server.py**: 只负责服务器初始化和工具注册，不包含具体工具逻辑
-- **tools/*.py**: 每个工具一个独立文件，便于维护和扩展
+### 环境变量
 
-### 工具开发模式
-```python
-# tools/your_tool.py
-from mcp.server.fastmcp import FastMCP
-from tools_module import ToolManager
+| 变量名 | 默认值 | 描述 |
+|--------|--------|------|
+| `ENVIRONMENT` | `development` | 运行环境 (`development`, `staging`, `production`) |
+| `SERVER_HOST` | `0.0.0.0` | 服务器主机地址 |
+| `SERVER_PORT` | `3000` | 服务器端口 |
+| `DATABASE_HOST` | `localhost` | 数据库主机地址 |
+| `DATABASE_PORT` | `3306` | 数据库端口 |
+| `DATABASE_USER` | `root` | 数据库用户名 |
+| `DATABASE_PASSWORD` | `123456` | 数据库密码 |
+| `DATABASE_NAME` | `mcp_platform` | 数据库名称 |
+| `DATABASE_URL_FORMAT` | `mysql+pymysql://...` | 数据库 URL 格式 |
+| `LOG_LEVEL` | `INFO` | 日志级别 |
+| `DEBUG` | `False` | 调试模式开关 |
+| `SECRET_KEY` | `dev-secret-key-...` | 密钥 (生产环境需修改) |
+| `POOL_SIZE` | `10` | 连接池大小 |
+| `MAX_OVERFLOW` | `20` | 连接池溢出数量 |
 
-def register_your_tool_tool(mcp: FastMCP, tool_manager: ToolManager):
-    @mcp.tool()
-    def your_tool(param: str) -> dict:
-        """Your tool description"""
-        return tool_manager.your_business_logic(param)
-```
+## 安装与启动
 
-然后在 `tools/registry.py` 中注册：
-```python
-from . import your_tool
+### 方法一：本地安装
 
-def register_all_tools(mcp: FastMCP, tool_manager: ToolManager):
-    your_tool.register_your_tool_tool(mcp, tool_manager)
-    # ... 其他工具注册
-```
+1. 克隆或下载项目
+2. 创建并激活虚拟环境：
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # Linux/Mac
+   # 或
+   venv\\Scripts\\activate   # Windows
+   ```
 
----
+3. 安装依赖：
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-## 🚀 快速开始
+4. 启动服务器：
+   ```bash
+   python server.py
+   ```
 
-### 1) 安装依赖
+### 方法二：使用安装脚本
+
+- Linux/Mac:
+  ```bash
+  chmod +x install.sh
+  ./install.sh
+  ```
+
+- Windows:
+  ```cmd
+  install.bat
+  ```
+
+### 方法三：Docker 部署
 
 ```bash
-pip install -r requirements.txt
+# 构建镜像
+docker build -t mcp-production-server .
+
+# 运行容器
+docker run -d -p 3000:3000 mcp-production-server
 ```
 
-### 2) 运行 MCP 服务器
+## API 接口
 
-```bash
-python server.py
-```
+服务器提供了以下主要接口：
 
-服务器启动后，你可以通过 MCP 客户端调用以下工具：
+- `mcp://data/sample` - 示例数据资源
+- `mcp://health` - 健康检查接口，返回服务器状态信息
+- 各种工具管理接口（通过注册的工具提供）
 
-- `echo(message: str)`
-- `calculate(expression: str)`
-- `list_tools(category: str = None)`
-- `add_tool(name: str, level: int, category: str)`
-- `get_tool_level(tool_name: str)`
-- `search_tools(keyword: str)`
-- `update_tool(name: str, level: int = None, category: str = None)`
-- `delete_tool(name: str)`
-- `get_categories()`
-- `get_statistics()`
+## 工具管理功能
 
-此外，还提供一个资源：
-- `test://data/sample`
+服务器集成了完整的工具管理系统，包括：
 
----
+- 工具列表查询
+- 工具添加/更新/删除
+- 工具搜索功能
+- 统计信息获取
+- 性能监控
+- 分类管理
 
-## 🧪 运行测试
+## 配置说明
 
-```bash
-pytest -q
-```
+项目支持三种环境配置：
 
-> ✅ 所有 18 个测试应当通过（包括 MCP 工具端到端测试、模块化测试和客户端测试）。
+1. **开发环境** (`DevelopmentConfig`)
+   - 启用调试模式
+   - 使用 SQLite 作为默认数据库
+   - 更详细的日志输出
 
----
+2. **预发布环境** (`StagingConfig`)
+   - 关闭调试模式
+   - 中等详细度的日志输出
+   - 可自定义预发布数据库配置
 
-## 🧩 代码使用示例（本地模块调用）
+3. **生产环境** (`ProductionConfig`)
+   - 强制要求设置 `SECRET_KEY`
+   - 关闭调试模式
+   - 较少的日志输出
+   - 优化的性能配置
 
-```python
-from tools_module import ToolManager
+## 安全注意事项
 
-manager = ToolManager()
-print(manager.list_all())
+- 在生产环境中务必更改默认的 `SECRET_KEY`
+- 不要在版本控制中提交敏感的环境配置文件
+- 使用强密码保护数据库访问
+- 限制服务器的网络访问权限
 
-manager.add_tool("Machine Learning", 5, "AI")
-print(manager.get_statistics())
-```
+## 部署建议
 
----
-
-## 🧪 示例程序
-
-项目包含示例程序，展示如何使用工具管理器：
-
-```bash
-python examples/basic_usage.py
-```
-
----
-
-## 📌 说明 & 扩展方向
-
-- 当前数据存储为内存实现，重启后数据会丢失
-- 可扩展：增加持久化存储（JSON/SQLite/数据库）、权限控制、REST/HTTP 接口
-- 联系方式：可在此项目基础上集成到更大的 MCP 服务中
+1. 使用环境变量而非硬编码配置
+2. 在生产环境中使用反向代理（如 Nginx）
+3. 定期备份数据库
+4. 监控服务器性能和资源使用情况
+5. 使用进程管理器（如 systemd 或 supervisor）管理服务
