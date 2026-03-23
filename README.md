@@ -1,4 +1,4 @@
-# MCP Production Server - 技能管理服务器
+# MCP Production Server - 工具管理服务器
 
 基于 FastMCP 构建的生产就绪技能管理 API 服务器，支持多种数据库后端和环境配置。
 
