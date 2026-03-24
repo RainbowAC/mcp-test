@@ -1,174 +1,143 @@
-# MCP Production Server - 工具管理服务器
+# MCP 工具管理服务器
 
-基于 FastMCP 构建的生产就绪技能管理 API 服务器，支持多种数据库后端和环境配置。
+一个基于 MCP (Model Context Protocol) 协议的工具管理服务器，提供安全的工具注册、管理和执行功能。
 
-## 项目概述
+## 🚀 特性
 
-本项目是一个基于 MCP (Model Context Protocol) 的技能管理服务器，提供了一套完整的工具管理和 API 接口。服务器支持多种数据库后端，具有灵活的配置选项，并可轻松部署到不同环境中。
+- **安全工具执行**: 内置安全计算器，防止代码注入
+- **MySQL 数据库支持**: 完整的数据库连接池管理
+- **性能监控**: 实时系统性能指标监控
+- **连接池优化**: 智能连接池管理，支持重试机制
+- **模块化设计**: 清晰的架构设计，易于扩展
 
-## 功能特性
-
-- 基于 FastMCP 框架构建
-- 支持多种数据库后端（MySQL、SQLite 等）
-- 灵活的环境配置管理
-- 完整的工具管理系统
-- 性能监控功能
-- Docker 容器化部署支持
-- RESTful API 接口
-
-## 项目结构
-
-```
-mcp-test/
-├── server.py             # 主服务器入口
-├── config.py             # 配置管理
-├── requirements.txt      # 项目依赖
-├── Dockerfile           # Docker 构建文件
-├── tools/               # 工具注册模块
-│   ├── registry.py
-│   └── ...              # 各种工具实现
-├── tools_module/        # 工具管理模块
-│   ├── __init__.py
-│   ├── models.py        # 数据模型
-│   ├── database.py      # 数据库操作
-│   ├── manager.py       # 业务逻辑管理器
-│   └── ...
-├── .env.development     # 开发环境配置
-├── .env.production      # 生产环境配置
-├── install.sh           # Linux/Mac 安装脚本
-├── install.bat          # Windows 安装脚本
-├── start.bat            # Windows 启动脚本
-└── mcp_dev.db           # SQLite 开发数据库
-```
-
-## 依赖项
-
-- Python >= 3.8
-- mcp >= 1.0.0
-- PyMySQL >= 1.0.2
-- SQLAlchemy >= 2.0.0
-- psutil >= 5.8.0
-- python-dotenv >= 1.0.0
-- gunicorn >= 21.2.0 (生产环境)
-- uvicorn >= 0.24.0
-
-## 环境配置
-
-### 环境变量
-
-| 变量名 | 默认值 | 描述 |
-|--------|--------|------|
-| `ENVIRONMENT` | `development` | 运行环境 (`development`, `staging`, `production`) |
-| `SERVER_HOST` | `0.0.0.0` | 服务器主机地址 |
-| `SERVER_PORT` | `3000` | 服务器端口 |
-| `DATABASE_HOST` | `localhost` | 数据库主机地址 |
-| `DATABASE_PORT` | `3306` | 数据库端口 |
-| `DATABASE_USER` | `root` | 数据库用户名 |
-| `DATABASE_PASSWORD` | `123456` | 数据库密码 |
-| `DATABASE_NAME` | `mcp_platform` | 数据库名称 |
-| `DATABASE_URL_FORMAT` | `mysql+pymysql://...` | 数据库 URL 格式 |
-| `LOG_LEVEL` | `INFO` | 日志级别 |
-| `DEBUG` | `False` | 调试模式开关 |
-| `SECRET_KEY` | `dev-secret-key-...` | 密钥 (生产环境需修改) |
-| `POOL_SIZE` | `10` | 连接池大小 |
-| `MAX_OVERFLOW` | `20` | 连接池溢出数量 |
-
-## 安装与启动
-
-### 方法一：本地安装
-
-1. 克隆或下载项目
-2. 创建并激活虚拟环境：
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # Linux/Mac
-   # 或
-   venv\\Scripts\\activate   # Windows
-   ```
-
-3. 安装依赖：
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-4. 启动服务器：
-   ```bash
-   python server.py
-   ```
-
-### 方法二：使用安装脚本
-
-- Linux/Mac:
-  ```bash
-  chmod +x install.sh
-  ./install.sh
-  ```
-
-- Windows:
-  ```cmd
-  install.bat
-  ```
-
-### 方法三：Docker 部署
+## 📦 安装依赖
 
 ```bash
-# 构建镜像
-docker build -t mcp-production-server .
+# 创建虚拟环境
+python -m venv .venv
 
-# 运行容器
-docker run -d -p 3000:3000 mcp-production-server
+# 激活虚拟环境
+# Windows
+.venv\Scripts\activate
+# Linux/Mac
+source .venv/bin/activate
+
+# 安装依赖
+pip install -r requirements.txt
 ```
 
-## API 接口
+## ⚙️ 配置
 
-服务器提供了以下主要接口：
+### 环境变量配置
 
-- `mcp://data/sample` - 示例数据资源
-- `mcp://health` - 健康检查接口，返回服务器状态信息
-- 各种工具管理接口（通过注册的工具提供）
+复制 `.env.example` 文件并配置您的环境变量：
 
-## 工具管理功能
+```bash
+# 服务器配置
+SERVER_HOST=localhost
+SERVER_PORT=3000
+SERVER_NAME=mcp-tool-server-dev
 
-服务器集成了完整的工具管理系统，包括：
+# MySQL 数据库配置
+DATABASE_HOST=localhost
+DATABASE_PORT=3306
+DATABASE_USER=root
+DATABASE_PASSWORD=123456
+DATABASE_NAME=mcp_dev
 
-- 工具列表查询
-- 工具添加/更新/删除
-- 工具搜索功能
-- 统计信息获取
-- 性能监控
-- 分类管理
+# 应用配置
+DEBUG=true
+LOG_LEVEL=DEBUG
+SECRET_KEY=dev-secret-key-for-development
+```
 
-## 配置说明
+### 数据库初始化
 
-项目支持三种环境配置：
+```bash
+# 初始化数据库
+python init_mysql.py
+```
 
-1. **开发环境** (`DevelopmentConfig`)
-   - 启用调试模式
-   - 使用 SQLite 作为默认数据库
-   - 更详细的日志输出
+## 🚀 启动服务器
 
-2. **预发布环境** (`StagingConfig`)
-   - 关闭调试模式
-   - 中等详细度的日志输出
-   - 可自定义预发布数据库配置
+```bash
+# 开发环境启动
+python start.py
 
-3. **生产环境** (`ProductionConfig`)
-   - 强制要求设置 `SECRET_KEY`
-   - 关闭调试模式
-   - 较少的日志输出
-   - 优化的性能配置
+# 或者直接运行
+python -m src.core.server
+```
 
-## 安全注意事项
+## 🧪 测试
 
-- 在生产环境中务必更改默认的 `SECRET_KEY`
-- 不要在版本控制中提交敏感的环境配置文件
-- 使用强密码保护数据库访问
-- 限制服务器的网络访问权限
+```bash
+# 运行所有测试
+python -m pytest test.py -v
 
-## 部署建议
+# 运行测试并生成覆盖率报告
+python -m pytest test.py --cov=src --cov-report=html
+```
 
-1. 使用环境变量而非硬编码配置
-2. 在生产环境中使用反向代理（如 Nginx）
-3. 定期备份数据库
-4. 监控服务器性能和资源使用情况
-5. 使用进程管理器（如 systemd 或 supervisor）管理服务
+## 📊 性能监控
+
+服务器内置性能监控功能，可以通过以下方式访问：
+
+- **健康检查**: `GET /health`
+- **性能指标**: `GET /metrics`
+
+## 🔧 开发工具
+
+### 代码格式化
+
+```bash
+# 使用 black 格式化代码
+black src/
+
+# 使用 flake8 检查代码质量
+flake8 src/
+
+# 使用 mypy 进行类型检查
+mypy src/
+```
+
+### 项目结构
+
+```
+src/
+├── core/           # 核心模块
+│   ├── config.py  # 配置管理
+│   └── server.py  # 服务器入口
+├── database/       # 数据库模块
+│   ├── connection.py  # 数据库连接管理
+│   ├── models.py      # 数据模型
+│   └── operations.py  # 数据库操作
+├── tools/          # 工具模块
+│   ├── registry.py    # 工具注册
+│   ├── simple/        # 简单工具
+│   └── management/    # 工具管理
+└── utils/          # 工具函数
+    ├── cache.py    # 缓存管理
+    └── monitor.py  # 性能监控
+```
+
+## 🔒 安全特性
+
+- **输入验证**: 所有用户输入都经过严格验证
+- **安全计算**: 计算器工具限制危险表达式执行
+- **连接池安全**: 数据库连接池配置安全参数
+- **错误处理**: 完善的错误处理和日志记录
+
+## 📈 性能优化
+
+- **连接池**: 智能连接池管理，支持连接复用
+- **缓存**: 内存缓存系统，减少数据库访问
+- **监控**: 实时性能监控和告警
+- **重试机制**: 数据库操作失败自动重试
+
+## 🤝 贡献
+
+欢迎提交 Issue 和 Pull Request！
+
+## 📄 许可证
+
+MIT License
