@@ -167,3 +167,111 @@ def register_calculator_tool(mcp: FastMCP):
         """
         result = SafeCalculator.evaluate(expression)
         return f"结果: {result}"
+
+
+# =============================================================================
+# 计算器工具专用测试函数
+# =============================================================================
+
+def test_calculator_basic_operations() -> bool:
+    """测试计算器基本运算功能"""
+    print("🧪 测试计算器基本运算...")
+    
+    try:
+        # 测试基本运算
+        test_cases = [
+            ("2 + 3", 5),
+            ("10 - 4", 6),
+            ("3 * 4", 12),
+            ("15 / 3", 5),
+            ("2 ** 3", 8),
+            ("10 % 3", 1),
+            ("15 // 4", 3)
+        ]
+        
+        all_passed = True
+        for expr, expected in test_cases:
+            result = SafeCalculator.evaluate(expr)
+            if result == expected:
+                print(f"✅ {expr} = {result}")
+            else:
+                print(f"❌ {expr} = {result} (期望: {expected})")
+                all_passed = False
+        
+        return all_passed
+        
+    except Exception as e:
+        print(f"❌ 计算器基本运算测试失败: {e}")
+        return False
+
+
+def test_calculator_security() -> bool:
+    """测试计算器安全性"""
+    print("🧪 测试计算器安全性...")
+    
+    try:
+        # 测试危险表达式（应该被拒绝）
+        dangerous_exprs = [
+            "__import__('os').system('ls')",
+            "eval('1+1')",
+            "exec('import os')",
+            "open('/etc/passwd').read()",
+            "__builtins__.__dict__['eval']('1+1')"
+        ]
+        
+        all_passed = True
+        for expr in dangerous_exprs:
+            result = SafeCalculator.evaluate(expr)
+            if "错误" in str(result) or "不允许" in str(result):
+                print(f"✅ 危险表达式被正确拒绝: {expr[:30]}...")
+            else:
+                print(f"❌ 危险表达式未被正确拒绝: {result}")
+                all_passed = False
+        
+        return all_passed
+        
+    except Exception as e:
+        print(f"❌ 计算器安全性测试失败: {e}")
+        return False
+
+
+def test_calculator_edge_cases() -> bool:
+    """测试计算器边界情况"""
+    print("🧪 测试计算器边界情况...")
+    
+    try:
+        # 测试边界情况
+        edge_cases = [
+            ("", "错误"),  # 空表达式
+            ("1 / 0", "错误"),  # 除零
+            ("1 + ", "错误"),  # 不完整表达式
+            ("(1 + 2", "错误"),  # 括号不匹配
+            ("1.5 + 2.5", 4.0),  # 浮点数运算
+            ("-5 + 3", -2),  # 负数运算
+            ("2 * (3 + 4)", 14)  # 复杂表达式
+        ]
+        
+        all_passed = True
+        for expr, expected in edge_cases:
+            result = SafeCalculator.evaluate(expr)
+            
+            if isinstance(expected, str) and "错误" in expected:
+                # 期望出错的情况
+                if "错误" in str(result):
+                    print(f"✅ 边界情况处理正确: {expr}")
+                else:
+                    print(f"❌ 边界情况处理失败: {expr} -> {result}")
+                    all_passed = False
+            else:
+                # 期望正常计算的情况
+                if result == expected:
+                    print(f"✅ {expr} = {result}")
+                else:
+                    print(f"❌ {expr} = {result} (期望: {expected})")
+                    all_passed = False
+        
+        return all_passed
+        
+    except Exception as e:
+        print(f"❌ 计算器边界情况测试失败: {e}")
+        return False
